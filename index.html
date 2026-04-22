@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Manajemen Catatan Dokumentasi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>📝 Sistem Manajemen Catatan Dokumentasi</h1>
+            <p>Framework catatan untuk dokumentasi development</p>
+        </header>
+
+        <nav class="toolbar">
+            <button class="btn btn-primary" onclick="showCreateForm()">
+                ➕ Buat Catatan Baru
+            </button>
+            <button class="btn btn-secondary" onclick="toggleFolderView()">
+                📁 Toggle View
+            </button>
+            <button class="btn btn-secondary" onclick="exportData()">
+                📤 Export Data
+            </button>
+            <button class="btn btn-secondary" onclick="importData()">
+                📥 Import Data
+            </button>
+            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleImportFile(event)">
+        </nav>
+
+        <div class="search-section">
+            <input type="text" id="searchInput" placeholder="🔍 Cari catatan (nama module, deskripsi, dll...)" onkeyup="searchNotes()">
+            <select id="folderFilter" onchange="filterByFolder()">
+                <option value="">Semua Folder</option>
+                <option value="modules">modules/</option>
+                <option value="core">core/</option>
+                <option value="logs">logs/</option>
+            </select>
+        </div>
+
+        <div class="main-content">
+            <aside class="sidebar" id="sidebar">
+                <h3>📂 Struktur Folder</h3>
+                <div class="folder-tree">
+                    <div class="folder" data-folder="modules">
+                        📁 modules/
+                        <div class="folder-items" id="modules-items"></div>
+                    </div>
+                    <div class="folder" data-folder="core">
+                        📁 core/
+                        <div class="folder-items" id="core-items"></div>
+                    </div>
+                    <div class="folder" data-folder="logs">
+                        📁 logs/
+                        <div class="folder-items" id="logs-items"></div>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="content">
+                <div id="notesGrid" class="notes-grid">
+                    <!-- Notes akan ditampilkan di sini -->
+                </div>
+
+                <div id="noteViewer" class="note-viewer" style="display: none;">
+                    <div class="note-header">
+                        <button class="btn btn-secondary" onclick="closeNoteViewer()">← Kembali</button>
+                        <button class="btn btn-primary" onclick="editCurrentNote()">✏️ Edit</button>
+                        <button class="btn btn-danger" onclick="deleteCurrentNote()">🗑️ Hapus</button>
+                    </div>
+                    <div id="noteContent" class="note-content"></div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Modal untuk Create/Edit Form -->
+        <div id="createModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Buat Catatan Baru</h3>
+                    <span class="close" onclick="closeCreateForm()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="noteForm">
+                        <div class="form-group">
+                            <label for="moduleName">Nama Module:</label>
+                            <input type="text" id="moduleName" required placeholder="contoh: BOOKING">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="folderSelect">Folder:</label>
+                            <select id="folderSelect" required>
+                                <option value="">Pilih Folder</option>
+                                <option value="modules">modules/</option>
+                                <option value="core">core/</option>
+                                <option value="logs">logs/</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Deskripsi:</label>
+                            <textarea id="description" rows="2" required placeholder="Deskripsi singkat module"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="files">Files:</label>
+                            <textarea id="files" rows="4" placeholder="Daftar file yang terkait (Controller, Service, Model, etc.)"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="flow">Flow:</label>
+                            <textarea id="flow" rows="4" placeholder="Alur proses/flow aplikasi"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dependency">Dependency:</label>
+                            <textarea id="dependency" rows="3" placeholder="Module/service yang diperlukan"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="database">Database:</label>
+                            <textarea id="database" rows="4" placeholder="Informasi tabel, field, relasi"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="api">API:</label>
+                            <textarea id="api" rows="3" placeholder="Endpoint API yang tersedia"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="logs">Log:</label>
+                            <textarea id="logs" rows="3" placeholder="Log perubahan dan bug fixes"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="todo">TODO:</label>
+                            <textarea id="todo" rows="3" placeholder="Task yang perlu dikerjakan"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="history">History:</label>
+                            <textarea id="history" rows="3" placeholder="Riwayat versi dan perubahan"></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="closeCreateForm()">Batal</button>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status bar -->
+        <div class="status-bar">
+            <span id="statusText">Siap</span>
+            <span id="noteCount">0 catatan</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
